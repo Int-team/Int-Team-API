@@ -24,32 +24,6 @@ namespace IntTeamAPI
         public const float flask = liter;
         public const float bloodTank = 5f * liter;
 
-        /// <summary>
-        /// Allows you to make something happen only once without having to make an extra method for it. Here is how to use it:
-        /// </summary>
-        /// <remarks>
-        /// <code>
-        /// (Instance) =>
-        /// {
-        ///     if(IntAPI.IsFirstSpawn(Instance))
-        ///     {
-        ///         //Your code here
-        ///     }
-        /// }
-        /// </code>
-        /// </remarks>
-        public static bool IsFirstSpawn(GameObject gameObject)
-        {
-            if (gameObject.HasComponent<OnFirstSpawn>())
-                return false;
-            gameObject.AddComponent<OnFirstSpawn>();
-            return true;
-        }
-
-        private class OnFirstSpawn : MonoBehaviour
-        {
-        }
-
         public static float LiquidUnitsToLiters(float num)
         {
             return num / liter;
@@ -59,32 +33,6 @@ namespace IntTeamAPI
         {
             return num * liter;
         }
-
-        /// <summary>
-        /// Allows you to toggle the collision of multiple things, most useful for entities.
-        /// </summary>
-        /// <param name="affectItself">Should the collisions between different colliders in <paramref name="others"/> be toggled off as well? The default is false.</param>
-        public static void IgnoreEntityCollision(this Collider2D main, Collider2D[] others, bool ignColl, bool affectItself = false)
-        {
-            foreach (Collider2D a in others)
-            {
-                IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(main, a, ignColl);
-                foreach (Collider2D b in others)
-                {
-                    if (a && b && a != b && a.transform != b.transform && affectItself)
-                        IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(a, b, ignColl);
-                }
-            }
-        }
-
-        /// <summary>
-        /// It's the same thing <see cref="IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(Collider2D, Collider2D, bool)"/> but does not take up the entire line.
-        /// </summary>
-        public static void IgnoreCollision(this Collider2D main, Collider2D other, bool ignColl)
-        {
-            IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(main, other, ignColl);
-        }
-
 
         /// <remarks>
         /// Doesn't actually change the alpha of <paramref name="color"/>, but instead returns a new color with the same RGB values but a new alpha.
@@ -243,6 +191,64 @@ namespace IntTeamAPI
             return Mathf.Round(value * Mathf.Pow(10, decimalPlaces)) / Mathf.Pow(10, decimalPlaces);
         }
 
+
+        public static void ErrorNotify(object message)
+        {
+            if (!UserPreferenceManager.Current.LogDebugMessages)
+                ModAPI.Notify(message);
+            throw new Exception($"{message}");
+        }
+
+        /// <summary>
+        /// Allows you to make something happen only once without having to make an extra method for it. Here is how to use it:
+        /// </summary>
+        /// <remarks>
+        /// <code>
+        /// (Instance) =>
+        /// {
+        ///     if(IntAPI.IsFirstSpawn(Instance))
+        ///     {
+        ///         //Your code here
+        ///     }
+        /// }
+        /// </code>
+        /// </remarks>
+        public static bool IsFirstSpawn(GameObject gameObject)
+        {
+            if (gameObject.HasComponent<OnFirstSpawn>())
+                return false;
+            gameObject.AddComponent<OnFirstSpawn>();
+            return true;
+        }
+        private class OnFirstSpawn : MonoBehaviour
+        {
+        }
+
+        /// <summary>
+        /// Allows you to toggle the collision of multiple things, most useful for entities.
+        /// </summary>
+        /// <param name="affectItself">Should the collisions between different colliders in <paramref name="others"/> be toggled off as well? The default is false.</param>
+        public static void IgnoreEntityCollision(this Collider2D main, Collider2D[] others, bool ignColl, bool affectItself = false)
+        {
+            foreach (Collider2D a in others)
+            {
+                IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(main, a, ignColl);
+                foreach (Collider2D b in others)
+                {
+                    if (a && b && a != b && a.transform != b.transform && affectItself)
+                        IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(a, b, ignColl);
+                }
+            }
+        }
+
+        /// <summary>
+        /// It's the same thing <see cref="IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(Collider2D, Collider2D, bool)"/> but does not take up the entire line.
+        /// </summary>
+        public static void IgnoreCollision(this Collider2D main, Collider2D other, bool ignColl)
+        {
+            IgnoreCollisionStackController.IgnoreCollisionSubstituteMethod(main, other, ignColl);
+        }
+
         /// <summary>
         /// Plays an <see cref="AudioClip"/> and sends a <see cref="ModAPI.Notify(object)"/> at the same time.
         /// </summary>
@@ -315,13 +321,6 @@ namespace IntTeamAPI
             GameObject instance = ModAPI.CreatePhysicalObject(name, sprite);
             afterSpawn(instance);
             return instance;
-        }
-
-        public static void ErrorNotify(object message)
-        {
-            if(!UserPreferenceManager.Current.LogDebugMessages)
-                ModAPI.Notify(message);
-            throw new Exception($"{message}");
         }
     }
 }
