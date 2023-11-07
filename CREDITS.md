@@ -1,6 +1,6 @@
 # CREDITS
 
-## VERSION: v5.0.0
+## VERSION: v5.0.1
 
 ## PROGRAMMERS
 - Dawid23_Gamer [Int Team]

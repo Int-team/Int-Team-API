@@ -31,26 +31,6 @@ namespace IntTeamAPI
         /// <code>
         /// (Instance) =>
         /// {
-        ///     if(!Instance.HasComponent&lt;<see cref="IntAPI"/>.<see cref="OnFirstSpawn"/>&gt;())
-        ///     {
-        ///         Instance.AddComponent&lt;<see cref="IntAPI"/>.<see cref="OnFirstSpawn"/>&gt;();
-        ///         //Your code here
-        ///     }
-        /// }
-        /// </code>
-        /// </remarks>
-        public class OnFirstSpawn : MonoBehaviour
-        {
-
-        }
-
-        /// <summary>
-        /// A shorter variant of manually using <see cref="OnFirstSpawn"/>. Here is how to use it:
-        /// </summary>
-        /// <remarks>
-        /// <code>
-        /// (Instance) =>
-        /// {
         ///     if(IntAPI.IsFirstSpawn(Instance))
         ///     {
         ///         //Your code here
@@ -64,6 +44,10 @@ namespace IntTeamAPI
                 return false;
             gameObject.AddComponent<OnFirstSpawn>();
             return true;
+        }
+
+        private class OnFirstSpawn : MonoBehaviour
+        {
         }
 
         public static float LiquidUnitsToLiters(float num)

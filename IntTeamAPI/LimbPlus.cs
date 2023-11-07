@@ -108,6 +108,7 @@ namespace IntTeamAPI
 
         static readonly Dictionary<LimbTypes, string> limbs = new Dictionary<LimbTypes, string>()
         {
+            //Human & Android limbs
             { LimbTypes.Head, "Head" },
             { LimbTypes.UpperBody, "Body/UpperBody" },
             { LimbTypes.MiddleBody, "Body/MiddleBody" },
@@ -121,7 +122,17 @@ namespace IntTeamAPI
             { LimbTypes.FootFront, "FrontLeg/FootFront" },
             { LimbTypes.UpperLegBack, "BackLeg/UpperLeg" },
             { LimbTypes.LowerLegBack, "BackLeg/LowerLeg" },
-            { LimbTypes.FootBack, "BackLeg/Foot" }
+            { LimbTypes.FootBack, "BackLeg/Foot" },
+            //Gorse limbs
+            { LimbTypes.Body, "body" },
+            { LimbTypes.RightUpperLegFront, "right upper leg" },
+            { LimbTypes.RightBottomLegFront, "right bottom leg" },
+            { LimbTypes.LeftUpperLegFront, "left upper leg" },
+            { LimbTypes.LeftBottomLegFront, "left bottom leg" },
+            { LimbTypes.RightUpperLegBack, "right upper leg background" },
+            { LimbTypes.RightBottomLegBack, "right bottom leg background" },
+            { LimbTypes.LeftUpperLegBack, "left upper leg background" },
+            { LimbTypes.LeftBottomLegBack, "left bottom leg background" }
         };
 
         static bool IsGorse(LimbTypes limbType)
@@ -129,19 +140,30 @@ namespace IntTeamAPI
             return (int)limbType > 13;
         }
 
+        public static LimbBehaviour FindLimb(this CirculationBehaviour circ, LimbTypes limbType)
+        {
+            return circ.Limb.Person.FindLimbComp<LimbBehaviour>(limbType);
+        }
+
+        public static LimbBehaviour FindLimb(this LimbBehaviour limb, LimbTypes limbType)
+        {
+            return limb.Person.FindLimbComp<LimbBehaviour>(limbType);
+        }
+
         public static LimbBehaviour FindLimb(this PersonBehaviour person, LimbTypes limbType)
         {
             return person.FindLimbComp<LimbBehaviour>(limbType);
         }
 
-        public static LimbBehaviour FindLimb(this LimbBehaviour limb, LimbTypes limbType)
+
+        public static T FindLimbComp<T>(this CirculationBehaviour circ, LimbTypes limbType) where T : Component
         {
-            return limb.FindLimbComp<LimbBehaviour>(limbType);
+            return circ.Limb.Person.FindLimbComp<T>(limbType);
         }
 
-        public static LimbBehaviour FindLimb(this CirculationBehaviour circ, LimbTypes limbType)
+        public static T FindLimbComp<T>(this LimbBehaviour limb, LimbTypes limbType) where T : Component
         {
-            return circ.FindLimbComp<LimbBehaviour>(limbType);
+            return limb.Person.FindLimbComp<T>(limbType);
         }
 
         public static T FindLimbComp<T>(this PersonBehaviour person, LimbTypes limbType) where T : Component
@@ -150,24 +172,11 @@ namespace IntTeamAPI
                 return null;
             return person.transform.Find(limbs[limbType])?.GetComponent<T>();
         }
-
-        public static T FindLimbComp<T>(this LimbBehaviour limb, LimbTypes limbType) where T : Component
-        {
-            if (IsGorse(limbType) != (limb.SpeciesIdentity == Species.Gorse))
-                return null;
-            return limb.Person.transform.Find(limbs[limbType])?.GetComponent<T>();
-        }
-
-        public static T FindLimbComp<T>(this CirculationBehaviour circ, LimbTypes limbType) where T : Component
-        {
-            if (IsGorse(limbType) != (circ.Limb.SpeciesIdentity == Species.Gorse))
-                return null;
-            return circ.Limb.Person.transform.Find(limbs[limbType])?.GetComponent<T>();
-        }
     }
 
     public enum LimbTypes
     {
+        //Human & Android limbs
         Head,
         UpperBody,
         MiddleBody,
@@ -181,7 +190,17 @@ namespace IntTeamAPI
         FootFront,
         UpperLegBack,
         LowerLegBack,
-        FootBack
+        FootBack,
+        //Gorse limbs
+        Body,
+        RightUpperLegFront,
+        RightBottomLegFront,
+        LeftUpperLegFront,
+        LeftBottomLegFront,
+        RightUpperLegBack,
+        RightBottomLegBack,
+        LeftUpperLegBack,
+        LeftBottomLegBack
     }
 }
 
